@@ -1,4 +1,6 @@
-# CIDOO QK61
+# CIDOO QK61 custom firmware
+
+* Advanced Tap Dance and LT support
 
 A customizable 61key keyboard.
 
@@ -7,11 +9,11 @@ A customizable 61key keyboard.
 
 Make example for this keyboard (after setting up your build environment):
 
-    make essemi/CIDOO QK61:default
+    make qk61:via
 
 Flashing example for this keyboard:
 
-    make essemi/CIDOO QK61:default:flash
+    make qk61:via:flash
 
 See the [build environment setup](https://docs.qmk.fm/#/getting_started_build_tools) and the [make instructions](https://docs.qmk.fm/#/getting_started_make_guide) for more information. Brand new to QMK? Start with our [Complete Newbs Guide](https://docs.qmk.fm/#/newbs).
 
