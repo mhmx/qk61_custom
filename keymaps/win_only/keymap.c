@@ -21,10 +21,9 @@
 // Layer definitions
 enum Layers {
     _WIN,                       // [0] Base Windows layer
-    _MAC,                       // [1] Base macOS layer
-    _NUM,                       // [2] Numpad layer
-    _FUNC,                      // [3] Layer with F-keys, RGB control and media
-    _NAV                        // [4] Navigation layer
+    _NUM,                       // [1] Numpad layer
+    _NAV,                       // [2] Navigation layer
+    _FUNC                       // [3] Layer with F-keys, RGB control and media
 // The _FUNC layer must be at position [3] for correct connection mode LED indication (BLE, wired, 2.4G)
 };
 
@@ -33,14 +32,12 @@ enum {
     TD_WIN_CAPS = 0,            // Language switch or temporary _NAV layer
     TD_NUM_TAB,                 // Tab modifier: single tap — Tab, double tap — persistent _NUM, hold — temporary _NUM
     TD_NUM_OFF,                 // Turn off persistent _NUM layer
-    TD_WIN_LOCK,                // Windows lock or App/Menu key
-    TD_MAC_LOCK                 // macOS or ROption(RAlt)
+    TD_WIN_LOCK                // Windows lock or App/Menu key
 };
 
 // Shortcut definitions
 #define WIN_LANG  A(S(KC_NO))   // Switch Windows language (Alt+Shift)
 #define WIN_LOCK  (G(KC_L))     // Lock Windows (Win+L)
-#define MAC_LOCK  C(G(KC_Q))    // Lock macOS (Ctrl+Cmd+Q)
 #define CTRL_Z    LCTL(KC_Z)    // Ctrl+Z
 #define CTRL_X    LCTL(KC_X)    // Ctrl+X
 #define CTRL_C    LCTL(KC_C)    // Ctrl+C
@@ -95,18 +92,12 @@ void td_winlock_finished(tap_dance_state_t *state, void *user_data) {
     state->pressed ? tap_code16(WIN_LOCK) : tap_code(KC_APP);
 }
 
-// macOS Lock on hold, RAlt (Option) on tap
-void td_maclock_finished(tap_dance_state_t *state, void *user_data) {
-    state->pressed ? tap_code16(MAC_LOCK) : tap_code(KC_RALT);
-}
-
 // Tap Dance table
 tap_dance_action_t tap_dance_actions[] = {
     [TD_WIN_CAPS] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_win_caps_finished, td_win_caps_reset),
     [TD_NUM_TAB]  = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_num_tab_finished,  td_num_tab_reset),
     [TD_NUM_OFF]  = ACTION_TAP_DANCE_FN(td_num_layer_off),
     [TD_WIN_LOCK] = ACTION_TAP_DANCE_FN(td_winlock_finished),
-    [TD_MAC_LOCK] = ACTION_TAP_DANCE_FN(td_maclock_finished),
 };
 
 // --- Layers ---
@@ -117,14 +108,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         TD(TD_WIN_CAPS),   KC_A,     KC_S,     KC_D,    KC_F,     KC_G,     KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,
         KC_LSFT,           KC_Z,     KC_X,     KC_C,    KC_V,     KC_B,     KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,                   KC_RSFT,
         KC_LCTL,           KC_LGUI,  KC_LALT,                     KC_SPC,                              KC_RALT, TD(TD_WIN_LOCK),  KC_RCTL, MO(_FUNC)
-    ),
-
-    [_MAC] = LAYOUT_tkl_ansi(
-        _______,           _______,  _______,  _______, _______,  _______,  _______, _______, _______, _______, _______, _______, _______, _______,
-        _______,           _______,  _______,  _______, _______,  _______,  _______, _______, _______, _______, _______, _______, _______, _______,
-        LT(_NAV,KC_CAPS),  _______,  _______,  _______, _______,  _______,  _______, _______, _______, _______, _______, _______,          _______,
-        _______,           _______,  _______,  _______, _______,  _______,  _______, _______, _______, _______, _______,                   _______,
-        _______,           KC_LALT,  KC_LGUI,                     _______,                             KC_RGUI, TD(TD_MAC_LOCK),  _______, _______
     ),
 
     [_NUM] = LAYOUT_tkl_ansi(
@@ -146,7 +129,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_FUNC] = LAYOUT_tkl_ansi(
         KC_GRV,            KC_F1,    KC_F2,    KC_F3,   KC_F4,    KC_F5,    KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,
         LOGO_TOG,          MD_BLE1,  MD_BLE2,  MD_BLE3, MD_24G,   _______,  _______, _______, KC_INS,  _______, _______, RGB_SPD, RGB_SPI, U_EE_CLR,
-        LOGO_MOD,          LOGO_HUD, LOGO_HUI, _______, TO(_WIN), TO(_MAC), _______, _______, _______, _______, RGB_HUD, RGB_HUI,          QK_BAT,
+        LOGO_MOD,          LOGO_HUD, LOGO_HUI, _______, _______,  _______,  _______, _______, _______, _______, RGB_HUD, RGB_HUI,          QK_BAT,
         LOGO_VAI,          RGB_VAD,  RGB_VAI,  _______, _______,  _______,  _______, RGB_RMOD,                  RGB_MOD, KC_MPRV, KC_MNXT, KC_MPLY, 
         LOGO_VAD,          LOGO_SPD, LOGO_SPI,                    RGB_TOG,                             KC_VOLD, KC_VOLU, KC_MUTE,          _______
     )
