@@ -88,4 +88,5 @@
 
 // custom lines
 #define TAPPING_TERM 150	// custom delay for Tap Dance (default 200 ms)
+#define COMBO_TERM 25       // 50 ms - default delay for Combos
 

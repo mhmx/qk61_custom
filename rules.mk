@@ -26,3 +26,6 @@ GRAVE_ESC_ENABLE = no
 
 # if you renamed qk61.c->keyboard.c, add this path
 SRC +=keyboard.c
+
+# added combo support
+COMBO_ENABLE = yes
