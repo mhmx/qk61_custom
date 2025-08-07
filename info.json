@@ -9,7 +9,7 @@
     },
     "matrix_pins": {
         "cols": [ "D15", "D14", "C15", "C14", "C13", "D3", "D2", "C12", "C11", "C10", "A14", "C9", "C8", "C7", "C6", "B15"],
-        "rows": [ "B0", "B3", "Bß4", "B5", "B6", "B7"]
+        "rows": [ "B0", "B3", "B4", "B5", "B6", "B7"]
     },
     "diode_direction": "ROW2COL",
     "features": {
