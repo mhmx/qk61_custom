@@ -23,8 +23,8 @@
 enum Layers {
     _MAC,                       // [0] Base macOS layer
     _NUM,                       // [1] Numpad layer
-    _NAV                        // [2] Navigation layer
-    _FUNC,                      // [3] Layer with F-keys, RGB control and media
+    _NAV,                       // [2] Navigation layer
+    _FUNC                       // [3] Layer with F-keys, RGB control and media
 // The _FUNC layer must be at position [3] for correct connection mode LED indication (BLE, wired, 2.4G)
 };
 
@@ -60,7 +60,7 @@ void td_num_tab_reset(tap_dance_state_t *state, void *user_data) {
 // Disable Numpad layer
 void td_num_layer_off(tap_dance_state_t *state, void *user_data) {
     if ((state->count == 2 && !state->pressed) || (state->count == 1 && state->pressed)) {
-        layer_move(_WIN);       // toggle _WIN back on double tap or hold
+        layer_move(_MAC);       // toggle _MAC back on double tap or hold
     } else if (state->count == 1 && !state->pressed) {
         tap_code(KC_TAB);
     }
@@ -100,7 +100,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_GRV,            KC_F1,    KC_F2,    KC_F3,   KC_F4,    KC_F5,    KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,
         _______,           _______,  KC_LGUI,  KC_F2,   KC_F4,    _______,  _______, KC_HOME, KC_UP,   KC_PGUP, KC_PSCR, KC_SCRL, KC_NUM,  KC_PAUS,
         _______,           _______,  KC_LCTL,  KC_LSFT, KC_LALT,  KC_ENT,   KC_ENT,  KC_LEFT, KC_DOWN, KC_RGHT, KC_BSPC, KC_DEL,           KC_ENT,
-        KC_CAPS,           CTRL_Z,   CTRL_X,   CTRL_C,  CTRL_V,   PST_VAL,  _______, KC_END,  KC_DOT,  KC_PGDN, _______,                   _______,
+        KC_CAPS,           _______,  _______,  _______, _______,  _______,  _______, KC_END,  KC_DOT,  KC_PGDN, _______,                   _______,
         _______,           _______,  _______,                     _______,                             _______, _______,          _______, _______
     ),
 

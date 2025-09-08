@@ -13,6 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include QMK_KEYBOARD_H
 #include "../../../lib/rdr_lib/rdr_common.h"
 
@@ -23,7 +24,7 @@ enum Layers {
     _WIN,                       // [0] Base Windows layer
     _NUM,                       // [1] Numpad layer
     _NAV,                       // [2] Navigation layer
-    _FUNC                       // [3] Layer with F-keys, RGB control and media
+    _FUNC                      // [3] Layer with F-keys, RGB control and media
 // The _FUNC layer must be at position [3] for correct connection mode LED indication (BLE, wired, 2.4G)
 };
 
@@ -32,7 +33,7 @@ enum {
     TD_WIN_CAPS = 0,            // Language switch or temporary _NAV layer
     TD_NUM_TAB,                 // Tab modifier: single tap — Tab, double tap — persistent _NUM, hold — temporary _NUM
     TD_NUM_OFF,                 // Turn off persistent _NUM layer
-    TD_WIN_LOCK                // Windows lock or App/Menu key
+    TD_WIN_LOCK                 // Windows lock or App/Menu key
 };
 
 // Shortcut definitions
@@ -100,6 +101,88 @@ tap_dance_action_t tap_dance_actions[] = {
     [TD_WIN_LOCK] = ACTION_TAP_DANCE_FN(td_winlock_finished),
 };
 
+// --- Combos ---
+
+enum combos {
+    COMBO_WIN_E,
+    COMBO_ESC,
+    COMBO_ENTER,
+    COMBO_ALT_F4,
+    COMBO_FN_BASE, // начало F-комбо
+    COMBO_LENGTH = COMBO_FN_BASE + 12 // 12 штук — F1–F12
+};
+
+const uint16_t PROGMEM win_e_combo[]   = {KC_Q, KC_W, KC_E, KC_R, COMBO_END};
+const uint16_t PROGMEM esc_combo[]     = {KC_Z, KC_X, KC_C, KC_V, COMBO_END};
+const uint16_t PROGMEM enter_combo[]   = {KC_A, KC_S, KC_D, KC_F, COMBO_END};
+const uint16_t PROGMEM alt_f4_combo[]  = {KC_W, KC_S, COMBO_END};
+
+// F1–F12: F + 1–0 - = → F1–F12
+const uint16_t PROGMEM f_key_combos[][3] = {
+    {KC_F, KC_1, COMBO_END},   // F1
+    {KC_F, KC_2, COMBO_END},   // F2
+    {KC_F, KC_3, COMBO_END},   // F3
+    {KC_F, KC_4, COMBO_END},   // F4
+    {KC_F, KC_5, COMBO_END},   // F5
+    {KC_F, KC_6, COMBO_END},   // F6
+    {KC_F, KC_7, COMBO_END},   // F7
+    {KC_F, KC_8, COMBO_END},   // F8
+    {KC_F, KC_9, COMBO_END},   // F9
+    {KC_F, KC_0, COMBO_END},   // F10
+    {KC_F, KC_MINS, COMBO_END},// F11
+    {KC_F, KC_EQL, COMBO_END}  // F12
+    
+};
+
+combo_t key_combos[COMBO_LENGTH] = {
+    [COMBO_WIN_E] = COMBO_ACTION(win_e_combo),
+    [COMBO_ESC]     = COMBO_ACTION(esc_combo),
+    [COMBO_ENTER]   = COMBO_ACTION(enter_combo),
+    [COMBO_ALT_F4]  = COMBO_ACTION(alt_f4_combo),
+    // F1–F12:
+    [COMBO_FN_BASE + 0] = COMBO_ACTION(f_key_combos[0]),
+    [COMBO_FN_BASE + 1] = COMBO_ACTION(f_key_combos[1]),
+    [COMBO_FN_BASE + 2] = COMBO_ACTION(f_key_combos[2]),
+    [COMBO_FN_BASE + 3] = COMBO_ACTION(f_key_combos[3]),
+    [COMBO_FN_BASE + 4] = COMBO_ACTION(f_key_combos[4]),
+    [COMBO_FN_BASE + 5] = COMBO_ACTION(f_key_combos[5]),
+    [COMBO_FN_BASE + 6] = COMBO_ACTION(f_key_combos[6]),
+    [COMBO_FN_BASE + 7] = COMBO_ACTION(f_key_combos[7]),
+    [COMBO_FN_BASE + 8] = COMBO_ACTION(f_key_combos[8]),
+    [COMBO_FN_BASE + 9] = COMBO_ACTION(f_key_combos[9]),
+    [COMBO_FN_BASE +10] = COMBO_ACTION(f_key_combos[10]),
+    [COMBO_FN_BASE +11] = COMBO_ACTION(f_key_combos[11]),
+};
+
+void process_combo_event(uint16_t combo_index, bool pressed) {
+    if (!pressed) return;
+
+    switch (combo_index) {
+        case COMBO_WIN_E:
+            register_code(KC_LGUI);
+            tap_code(KC_E);
+            unregister_code(KC_LGUI);
+            break;
+        case COMBO_ESC:
+            tap_code(KC_ESC);
+            break;
+        case COMBO_ENTER:
+            tap_code(KC_ENT);
+            break;
+        case COMBO_ALT_F4:
+            register_code(KC_LALT);
+            tap_code(KC_F4);
+            unregister_code(KC_LALT);
+            break;
+        default:
+            // Если это одно из F1–F12
+            if (combo_index >= COMBO_FN_BASE && combo_index < COMBO_FN_BASE + 12) {
+                tap_code(KC_F1 + (combo_index - COMBO_FN_BASE));
+            }
+            break;
+    }
+}
+
 // --- Layers ---
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_WIN] = LAYOUT_tkl_ansi(
@@ -113,8 +196,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_NUM] = LAYOUT_tkl_ansi(
         KC_ESC,            _______,  _______,  _______, _______,  _______,  _______, _______, KC_PSLS, KC_PAST, _______, _______, _______, KC_BSPC,
         TD(TD_NUM_OFF),    _______,  _______,  KC_F2,   KC_F4,    _______,  _______, KC_P7,   KC_P8,   KC_P9,   KC_PMNS, _______, _______, _______,
-        _______,           _______,  _______,  _______, _______,  _______,  S(KC_9), KC_P4,   KC_P5,   KC_P6,   KC_PPLS, _______,          KC_PENT,
-        _______,           _______,  _______,  _______, _______,  KC_PEQL,  S(KC_0), KC_P1,   KC_P2,   KC_P3,   KC_PDOT,                   _______,
+        _______,           _______,  _______,  _______, KC_ENT,   _______,  S(KC_9), KC_P4,   KC_P5,   KC_P6,   KC_PPLS, _______,          KC_PENT,
+        _______,           _______,  _______,  _______, _______,  KC_EQL,   S(KC_0), KC_P1,   KC_P2,   KC_P3,   KC_PDOT,                   _______,
         _______,           _______,  _______,                     KC_P0,                              _______,  _______,          _______, _______
     ),
 
@@ -130,7 +213,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_GRV,            KC_F1,    KC_F2,    KC_F3,   KC_F4,    KC_F5,    KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,
         LOGO_TOG,          MD_BLE1,  MD_BLE2,  MD_BLE3, MD_24G,   _______,  _______, _______, KC_INS,  _______, _______, RGB_SPD, RGB_SPI, U_EE_CLR,
         LOGO_MOD,          LOGO_HUD, LOGO_HUI, _______, _______,  _______,  _______, _______, _______, _______, RGB_HUD, RGB_HUI,          QK_BAT,
-        LOGO_VAI,          RGB_VAD,  RGB_VAI,  _______, _______,  _______,  _______, RGB_RMOD,                  RGB_MOD, KC_MPRV, KC_MNXT, KC_MPLY, 
+        LOGO_VAI,          RGB_VAD,  RGB_VAI,  KC_CALC, _______,  _______,  _______, RGB_RMOD,                  RGB_MOD, KC_MPRV, KC_MNXT, KC_MPLY, 
         LOGO_VAD,          LOGO_SPD, LOGO_SPI,                    RGB_TOG,                             KC_VOLD, KC_VOLU, KC_MUTE,          _______
     )
 };
