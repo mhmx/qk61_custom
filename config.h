@@ -72,7 +72,6 @@
 // lines from config.h at /keymaps folder
 #define DYNAMIC_KEYMAP_EEPROM_MAX_ADDR  1151
 #define EEPROM_SIZE 1152
-#define DYNAMIC_KEYMAP_LAYER_COUNT 5 // 5 layers, also add to rules.mk
 
 #define FEE_PAGE_SIZE (0x200)
 #define FEE_PAGE_COUNT (8)
