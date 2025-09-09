@@ -105,16 +105,12 @@ tap_dance_action_t tap_dance_actions[] = {
 
 enum combos {
     COMBO_WIN_E,
-    COMBO_ESC,
-    COMBO_ENTER,
     COMBO_ALT_F4,
     COMBO_FN_BASE, // начало F-комбо
     COMBO_LENGTH = COMBO_FN_BASE + 12 // 12 штук — F1–F12
 };
 
-const uint16_t PROGMEM win_e_combo[]   = {KC_Q, KC_W, KC_E, KC_R, COMBO_END};
-const uint16_t PROGMEM esc_combo[]     = {KC_Z, KC_X, KC_C, KC_V, COMBO_END};
-const uint16_t PROGMEM enter_combo[]   = {KC_A, KC_S, KC_D, KC_F, COMBO_END};
+const uint16_t PROGMEM win_e_combo[]   = {KC_Q, KC_W, KC_E, COMBO_END};
 const uint16_t PROGMEM alt_f4_combo[]  = {KC_W, KC_S, COMBO_END};
 
 // F1–F12: F + 1–0 - = → F1–F12
@@ -136,9 +132,7 @@ const uint16_t PROGMEM f_key_combos[][3] = {
 
 combo_t key_combos[COMBO_LENGTH] = {
     [COMBO_WIN_E] = COMBO_ACTION(win_e_combo),
-    [COMBO_ESC]     = COMBO_ACTION(esc_combo),
     [COMBO_ENTER]   = COMBO_ACTION(enter_combo),
-    [COMBO_ALT_F4]  = COMBO_ACTION(alt_f4_combo),
     // F1–F12:
     [COMBO_FN_BASE + 0] = COMBO_ACTION(f_key_combos[0]),
     [COMBO_FN_BASE + 1] = COMBO_ACTION(f_key_combos[1]),
@@ -162,12 +156,6 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
             register_code(KC_LGUI);
             tap_code(KC_E);
             unregister_code(KC_LGUI);
-            break;
-        case COMBO_ESC:
-            tap_code(KC_ESC);
-            break;
-        case COMBO_ENTER:
-            tap_code(KC_ENT);
             break;
         case COMBO_ALT_F4:
             register_code(KC_LALT);
