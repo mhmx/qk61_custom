@@ -35,16 +35,13 @@ enum {
     TD_MAC_LOCK                 // macOS or ROption(RAlt)
 };
 
-// Shortcut definitions
-#define MAC_LOCK  C(G(KC_Q))    // Lock macOS (Ctrl+Cmd+Q)
-
 // --- Tap Dance functions ---
 
 // Tab modifier
 void td_num_tab_finished(tap_dance_state_t *state, void *user_data) {
     if (state->count == 1 && !state->pressed) {
         tap_code(KC_TAB);       // 1 tap: Tab
-    } else if (state->count == 2 && !state->pressed) {
+    } else if (state->count == 2 && state->pressed) {
         layer_move(_NUM);       // 2 taps: toggle _NUM
     } else if (state->count == 1 && state->pressed) {
         layer_on(_NUM);         // Hold: activate _NUM on hold
@@ -68,7 +65,7 @@ void td_num_layer_off(tap_dance_state_t *state, void *user_data) {
 
 // macOS Lock on hold, RAlt (Option) on tap
 void td_maclock_finished(tap_dance_state_t *state, void *user_data) {
-    state->pressed ? tap_code16(MAC_LOCK) : tap_code(KC_RALT);
+    state->pressed ? tap_code16(C(G(KC_Q))) : tap_code(KC_RALT);
 }
 
 // Tap Dance table
@@ -80,12 +77,13 @@ tap_dance_action_t tap_dance_actions[] = {
 
 // --- Layers ---
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+    
     [_MAC] = LAYOUT_tkl_ansi(
-        _______,           _______,  _______,  _______, _______,  _______,  _______, _______, _______, _______, _______, _______, _______, _______,
-        _______,           _______,  _______,  _______, _______,  _______,  _______, _______, _______, _______, _______, _______, _______, _______,
-        LT(_NAV,KC_CAPS),  _______,  _______,  _______, _______,  _______,  _______, _______, _______, _______, _______, _______,          _______,
-        _______,           _______,  _______,  _______, _______,  _______,  _______, _______, _______, _______, _______,                   _______,
-        _______,           KC_LALT,  KC_LGUI,                     _______,                             KC_RGUI, TD(TD_MAC_LOCK),  _______, _______
+        KC_ESC,            KC_1,     KC_2,     KC_3,    KC_4,     KC_5,     KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC,
+        KC_TAB,            KC_Q,     KC_W,     KC_E,    KC_R,     KC_T,     KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,
+        LT(_NAV,KC_CAPS),  KC_A,     KC_S,     KC_D,    KC_F,     KC_G,     KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,
+        KC_LSFT,           KC_Z,     KC_X,     KC_C,    KC_V,     KC_B,     KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,                   KC_RSFT,
+        KC_LCTL,           KC_LALT,  KC_LGUI,                     KC_SPC,                              KC_RGUI, TD(TD_MAC_LOCK),  KC_RCTL, MO(_FUNC)
     ),
 
     [_NUM] = LAYOUT_tkl_ansi(

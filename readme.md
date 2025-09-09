@@ -9,11 +9,11 @@ __Advanced Tap Dance and LT support__
 
 Make example for this keyboard (after setting up your build environment):
 
-    make qk61:custom
+    make qk61:win
 
 Flashing example for this keyboard:
 
-    make qk61:custom:flash
+    make qk61:win:flash
 
 See the [build environment setup](https://docs.qmk.fm/#/getting_started_build_tools) and the [make instructions](https://docs.qmk.fm/#/getting_started_make_guide) for more information. Brand new to QMK? Start with our [Complete Newbs Guide](https://docs.qmk.fm/#/newbs).
 

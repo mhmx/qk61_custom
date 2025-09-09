@@ -66,7 +66,7 @@ void td_win_caps_reset(tap_dance_state_t *state, void *user_data) {
 void td_num_tab_finished(tap_dance_state_t *state, void *user_data) {
     if (state->count == 1 && !state->pressed) {
         tap_code(KC_TAB);       // 1 tap: Tab
-    } else if (state->count == 2 && !state->pressed) {
+    } else if (state->count == 2 && state->pressed) {
         layer_move(_NUM);       // 2 taps: toggle _NUM
     } else if (state->count == 1 && state->pressed) {
         layer_on(_NUM);         // Hold: activate _NUM on hold
