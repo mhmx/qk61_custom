@@ -132,7 +132,7 @@ const uint16_t PROGMEM f_key_combos[][3] = {
 
 combo_t key_combos[COMBO_LENGTH] = {
     [COMBO_WIN_E] = COMBO_ACTION(win_e_combo),
-    [COMBO_ENTER]   = COMBO_ACTION(enter_combo),
+    [COMBO_ALT_F4] = COMBO_ACTION(alt_f4_combo),
     // F1–F12:
     [COMBO_FN_BASE + 0] = COMBO_ACTION(f_key_combos[0]),
     [COMBO_FN_BASE + 1] = COMBO_ACTION(f_key_combos[1]),
