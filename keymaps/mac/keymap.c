@@ -81,7 +81,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,           _______,  KC_LGUI,  KC_F2,   KC_F4,    _______,  _______, KC_HOME, KC_UP,   KC_PGUP, _______, _______, _______, TD(TD_SWITCH),
         _______,           _______,  KC_LCTL,  KC_LSFT, KC_LALT,  KC_ENT,   KC_ENT,  KC_LEFT, KC_DOWN, KC_RGHT, KC_BSPC, KC_DEL,           KC_ENT,
         KC_CAPS,           _______,  _______,  _______, _______,  _______,  _______, KC_END,  _______, KC_PGDN, _______,                   TD(TD_CASE),
-        _______,           _______,  _______,                     _______,                             _______, _______,          _______, _______
+        _______,           KC_BRMD,  KC_BRMU,                     _______,                             _______, _______,          _______, _______
     ),
 
     [_FUNC] = LAYOUT_tkl_ansi(
