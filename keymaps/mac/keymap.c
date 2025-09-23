@@ -31,7 +31,8 @@ enum Layers {
 // Tap Dance actions
 enum {
     TD_SWITCH,                  // for puntoSwitcher - Ctrl+Cmd+Backslash to change language of text
-    TD_MAC_LOCK                 // macOS or ROption(RAlt)
+    TD_MAC_LOCK,                // macOS or ROption(RAlt)
+    TD_CASE                     // for puntoSwitcher - Ctrl+Cmd+Alt to change case of selected text (abc -> ABC)
 };
 
 // macOS Lock on hold, RAlt (Option) on tap
@@ -44,10 +45,16 @@ void td_switch_finished(tap_dance_state_t *state, void *user_data) {
     state->pressed ? tap_code(KC_BSLS)  : tap_code16(C(G(KC_BSLS)));
 }
 
+// puntoSwitcher for macOS: Ctrl + Cmd + Alt to change case of selected text (abc -> ABC)
+void td_case_finished(tap_dance_state_t *state, void *user_data) {
+    state->pressed ? tap_code(KC_RSFT)  : tap_code16(C(G(KC_LALT)));
+}
+
 // Tap Dance table
 tap_dance_action_t tap_dance_actions[] = {
     [TD_MAC_LOCK] = ACTION_TAP_DANCE_FN(td_maclock_finished),
     [TD_SWITCH] = ACTION_TAP_DANCE_FN(td_switch_finished),
+    [TD_CASE] = ACTION_TAP_DANCE_FN(td_case_finished),
 };
 
 // --- Layers ---
@@ -73,7 +80,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_GRV,            KC_F1,    KC_F2,    KC_F3,   KC_F4,    KC_F5,    KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,
         _______,           _______,  KC_LGUI,  KC_F2,   KC_F4,    _______,  _______, KC_HOME, KC_UP,   KC_PGUP, _______, _______, _______, TD(TD_SWITCH),
         _______,           _______,  KC_LCTL,  KC_LSFT, KC_LALT,  KC_ENT,   KC_ENT,  KC_LEFT, KC_DOWN, KC_RGHT, KC_BSPC, KC_DEL,           KC_ENT,
-        KC_CAPS,           _______,  _______,  _______, _______,  _______,  _______, KC_END,  _______, KC_PGDN, _______,                   _______,
+        KC_CAPS,           _______,  _______,  _______, _______,  _______,  _______, KC_END,  _______, KC_PGDN, _______,                   TD(TD_CASE),
         _______,           _______,  _______,                     _______,                             _______, _______,          _______, _______
     ),
 
