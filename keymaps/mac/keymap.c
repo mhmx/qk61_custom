@@ -50,14 +50,11 @@ void td_case_finished(tap_dance_state_t *state, void *user_data) {
     if (state->pressed) {
         tap_code(KC_RSFT);
     } else {
-        // select word to left
-        tap_code16(S(A(KC_LEFT)));
-
-        // delay
-        wait_ms(50);
-        
-        // change case
-        tap_code16(C(G(KC_LALT)));
+        tap_code16(S(A(KC_LEFT))); // select word to left
+        tap_code16(C(G(KC_LALT))); // change case
+        wait_ms(300);
+        tap_code16(KC_RIGHT);      // unselect word (right)
+        tap_code16(KC_SPC);        // add space
     }
 }
 
