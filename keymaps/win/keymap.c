@@ -33,7 +33,9 @@ enum {
     TD_WIN_CAPS = 0,            // Language switch or temporary _NAV layer
     TD_NUM_TAB,                 // Tab modifier: single tap — Tab, double tap — persistent _NUM, hold — temporary _NUM
     TD_NUM_OFF,                 // Turn off persistent _NUM layer
-    TD_WIN_LOCK                 // Windows lock or App/Menu key
+    TD_WIN_LOCK,                // Windows lock or App/Menu key
+    TD_CASE                     // for puntoSwitcher - Ctrl+Cmd+Alt to change case of selected text (abc -> ABC)
+
 };
 
 // Shortcut definitions
@@ -93,12 +95,18 @@ void td_winlock_finished(tap_dance_state_t *state, void *user_data) {
     state->pressed ? tap_code16(WIN_LOCK) : tap_code(KC_APP);
 }
 
+// puntoSwitcher for win: Ctrl + Cmd + Alt + \ to change case of selected text (abc -> ABC)
+void td_case_finished(tap_dance_state_t *state, void *user_data) {
+    state->pressed ? tap_code(KC_RSFT)  : tap_code16(C(S(A(KC_BSLS))));
+}
+
 // Tap Dance table
 tap_dance_action_t tap_dance_actions[] = {
     [TD_WIN_CAPS] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_win_caps_finished, td_win_caps_reset),
     [TD_NUM_TAB]  = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_num_tab_finished,  td_num_tab_reset),
     [TD_NUM_OFF]  = ACTION_TAP_DANCE_FN(td_num_layer_off),
     [TD_WIN_LOCK] = ACTION_TAP_DANCE_FN(td_winlock_finished),
+    [TD_CASE] = ACTION_TAP_DANCE_FN(td_case_finished),
 };
 
 // --- Combos ---
@@ -193,7 +201,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_GRV,            KC_F1,    KC_F2,    KC_F3,   KC_F4,    KC_F5,    KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,
         _______,           _______,  KC_LGUI,  KC_F2,   KC_F4,    _______,  _______, KC_HOME, KC_UP,   KC_PGUP, KC_PSCR, KC_SCRL, KC_NUM,  KC_PAUS,
         _______,           _______,  KC_LCTL,  KC_LSFT, KC_LALT,  KC_ENT,   KC_ENT,  KC_LEFT, KC_DOWN, KC_RGHT, KC_BSPC, KC_DEL,           KC_ENT,
-        KC_CAPS,           CTRL_Z,   CTRL_X,   CTRL_C,  CTRL_V,   PST_VAL,  _______, KC_END,  KC_DOT,  KC_PGDN, _______,                   _______,
+        KC_CAPS,           CTRL_Z,   CTRL_X,   CTRL_C,  CTRL_V,   PST_VAL,  _______, KC_END,  KC_DOT,  KC_PGDN, _______,                   TD(TD_CASE),
         _______,           _______,  _______,                     _______,                             _______, _______,          _______, _______
     ),
 
