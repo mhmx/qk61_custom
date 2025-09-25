@@ -47,7 +47,18 @@ void td_switch_finished(tap_dance_state_t *state, void *user_data) {
 
 // puntoSwitcher for macOS: Ctrl + Cmd + Alt to change case of selected text (abc -> ABC)
 void td_case_finished(tap_dance_state_t *state, void *user_data) {
-    state->pressed ? tap_code(KC_RSFT)  : tap_code16(C(G(KC_LALT)));
+    if (state->pressed) {
+        tap_code(KC_RSFT);
+    } else {
+        // select word to left
+        tap_code16(S(A(KC_LEFT)));
+
+        // delay
+        wait_ms(50);
+        
+        // change case
+        tap_code16(C(G(KC_LALT)));
+    }
 }
 
 // Tap Dance table
