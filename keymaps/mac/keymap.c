@@ -52,7 +52,7 @@ void td_case_finished(tap_dance_state_t *state, void *user_data) {
     } else {
         tap_code16(S(A(KC_LEFT))); // select word to left
         tap_code16(C(G(KC_LALT))); // change case
-        wait_ms(300);
+        wait_ms(250);
         tap_code16(KC_RIGHT);      // unselect word (right)
         tap_code16(KC_SPC);        // add space
     }

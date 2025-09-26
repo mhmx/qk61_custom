@@ -24,7 +24,7 @@ enum Layers {
     _WIN,                       // [0] Base Windows layer
     _NUM,                       // [1] Numpad layer
     _NAV,                       // [2] Navigation layer
-    _FUNC                      // [3] Layer with F-keys, RGB control and media
+    _FUNC                       // [3] Layer with F-keys, RGB control and media
 // The _FUNC layer must be at position [3] for correct connection mode LED indication (BLE, wired, 2.4G)
 };
 
