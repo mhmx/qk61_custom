@@ -19,6 +19,14 @@ enum {
     TD_CASE                     // for puntoSwitcher - Ctrl+Cmd+Alt to change case of selected text (abc -> ABC)
 };
 
+// Shortcut definitions
+#define CMD_Z    LGUI(KC_Z)       // Cmd+Z
+#define CMD_X    LGUI(KC_X)       // Cmd+X
+#define CMD_C    LGUI(KC_C)       // Cmd+C
+#define CMD_V    LGUI(KC_V)       // Cmd+V
+#define CMD_PVAL S(C(LGUI(KC_V))) // Cmd+Ctrl+Shift+V (you need to create shortcut in Mac Excel for Paste Values)
+
+
 // macOS Lock on hold, RAlt (Option) on tap
 void td_maclock_finished(tap_dance_state_t *state, void *user_data) {
     state->pressed ? tap_code16(C(G(KC_Q))) : tap_code(KC_RALT);
@@ -72,7 +80,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_GRV,            KC_F1,    KC_F2,    KC_F3,   KC_F4,    KC_F5,    KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,
         _______,           _______,  KC_LGUI,  KC_F2,   KC_F4,    _______,  _______, KC_HOME, KC_UP,   KC_PGUP, _______, _______, _______, TD(TD_SWITCH),
         _______,           _______,  KC_LCTL,  KC_LSFT, KC_LALT,  KC_ENT,   KC_ENT,  KC_LEFT, KC_DOWN, KC_RGHT, KC_BSPC, KC_DEL,           KC_ENT,
-        KC_CAPS,           _______,  _______,  _______, _______,  _______,  _______, KC_END,  _______, KC_PGDN, _______,                   TD(TD_CASE),
+        KC_CAPS,           CMD_Z,    CMD_X,    CMD_C,   CMD_V,    CMD_PVAL, _______, KC_END,  _______, KC_PGDN, _______,                   TD(TD_CASE),
         _______,           KC_BRMD,  KC_BRMU,                     _______,                             _______, _______,          _______, _______
     ),
 
