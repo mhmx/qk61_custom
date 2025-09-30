@@ -25,22 +25,37 @@ enum {
 };
 
 // Shortcut definitions
+// --- System ---
 #define WIN_LANG  A(S(KC_NO))   // Switch Windows language (Alt+Shift)
 #define WIN_LOCK  (G(KC_L))     // Lock Windows (Win+L)
-#define CTRL_Z    LCTL(KC_Z)    // Ctrl+Z
-#define CTRL_X    LCTL(KC_X)    // Ctrl+X
-#define CTRL_C    LCTL(KC_C)    // Ctrl+C
-#define CTRL_V    LCTL(KC_V)    // Ctrl+V
-#define PST_VAL   LALT(KC_1)    // Alt+1 (paste values Excel shortcut)
-
-#define CTRL_W    LCTL(KC_W)
-#define ALT_F4    A(KC_F4)
-#define CTRL_S    LCTL(KC_S)
-#define CTRL_T    LCTL(KC_T)
-#define CTRL_A    LCTL(KC_A)
-#define CTRL_R    LCTL(KC_R)
 #define ALT_TAB   A(KC_TAB)
+#define ALT_F4    A(KC_F4)
 
+// --- Editing ---
+#define CTRL_Z    LCTL(KC_Z)    // Undo
+#define CTRL_X    LCTL(KC_X)    // Cut
+#define CTRL_C    LCTL(KC_C)    // Copy
+#define CTRL_V    LCTL(KC_V)    // Paste
+#define PST_VAL   LALT(KC_1)    // Alt+1 (Paste values in Excel)
+
+// --- Tabs & Files ---
+#define CTRL_W    LCTL(KC_W)    // Close tab
+#define CTRL_T    LCTL(KC_T)    // New tab
+#define CTRL_S    LCTL(KC_S)    // Save
+#define CTRL_A    LCTL(KC_A)    // Select all
+#define CTRL_R    LCTL(KC_R)    // Refresh
+
+// --- Tab Navigation ---
+#define CTRL_1    LCTL(KC_1)
+#define CTRL_2    LCTL(KC_2)
+#define CTRL_3    LCTL(KC_3)
+#define CTRL_4    LCTL(KC_4)
+#define CTRL_5    LCTL(KC_5)
+#define CTRL_6    LCTL(KC_6)
+#define CTRL_7    LCTL(KC_7)
+#define CTRL_8    LCTL(KC_8)
+#define CTRL_9    LCTL(KC_9)
+#define CTRL_0    LCTL(KC_0)
 
 // --- Tap Dance functions ---
 
@@ -57,7 +72,6 @@ void td_alt_layer_reset(tap_dance_state_t *state, void *user_data) {
         unregister_code(KC_LALT);
         layer_off(_ALT); // release → toggle layer _ALT off
 }
-
 
 // --- Tap Dance for Tab in layer _ALT ---
 void td_alt_tab_finished(tap_dance_state_t *state, void *user_data) {
@@ -143,76 +157,6 @@ tap_dance_action_t tap_dance_actions[] = {
     [TD_ALT_TAB]  = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_alt_tab_finished, td_alt_tab_reset),
 };
 
-// --- Combos ---
-
-enum combos {
-    COMBO_WIN_E,
-    COMBO_ALT_F4,
-    COMBO_FN_BASE, // начало F-комбо
-    COMBO_LENGTH = COMBO_FN_BASE + 12 // 12 штук — F1–F12
-};
-
-const uint16_t PROGMEM win_e_combo[]   = {KC_Q, KC_W, KC_E, COMBO_END};
-const uint16_t PROGMEM alt_f4_combo[]  = {KC_W, KC_S, COMBO_END};
-
-// F1–F12: F + 1–0 - = → F1–F12
-const uint16_t PROGMEM f_key_combos[][3] = {
-    {KC_F, KC_1, COMBO_END},   // F1
-    {KC_F, KC_2, COMBO_END},   // F2
-    {KC_F, KC_3, COMBO_END},   // F3
-    {KC_F, KC_4, COMBO_END},   // F4
-    {KC_F, KC_5, COMBO_END},   // F5
-    {KC_F, KC_6, COMBO_END},   // F6
-    {KC_F, KC_7, COMBO_END},   // F7
-    {KC_F, KC_8, COMBO_END},   // F8
-    {KC_F, KC_9, COMBO_END},   // F9
-    {KC_F, KC_0, COMBO_END},   // F10
-    {KC_F, KC_MINS, COMBO_END},// F11
-    {KC_F, KC_EQL, COMBO_END}  // F12
-    
-};
-
-combo_t key_combos[COMBO_LENGTH] = {
-    [COMBO_WIN_E] = COMBO_ACTION(win_e_combo),
-    [COMBO_ALT_F4] = COMBO_ACTION(alt_f4_combo),
-    // F1–F12:
-    [COMBO_FN_BASE + 0] = COMBO_ACTION(f_key_combos[0]),
-    [COMBO_FN_BASE + 1] = COMBO_ACTION(f_key_combos[1]),
-    [COMBO_FN_BASE + 2] = COMBO_ACTION(f_key_combos[2]),
-    [COMBO_FN_BASE + 3] = COMBO_ACTION(f_key_combos[3]),
-    [COMBO_FN_BASE + 4] = COMBO_ACTION(f_key_combos[4]),
-    [COMBO_FN_BASE + 5] = COMBO_ACTION(f_key_combos[5]),
-    [COMBO_FN_BASE + 6] = COMBO_ACTION(f_key_combos[6]),
-    [COMBO_FN_BASE + 7] = COMBO_ACTION(f_key_combos[7]),
-    [COMBO_FN_BASE + 8] = COMBO_ACTION(f_key_combos[8]),
-    [COMBO_FN_BASE + 9] = COMBO_ACTION(f_key_combos[9]),
-    [COMBO_FN_BASE +10] = COMBO_ACTION(f_key_combos[10]),
-    [COMBO_FN_BASE +11] = COMBO_ACTION(f_key_combos[11]),
-};
-
-void process_combo_event(uint16_t combo_index, bool pressed) {
-    if (!pressed) return;
-
-    switch (combo_index) {
-        case COMBO_WIN_E:
-            register_code(KC_LGUI);
-            tap_code(KC_E);
-            unregister_code(KC_LGUI);
-            break;
-        case COMBO_ALT_F4:
-            register_code(KC_LALT);
-            tap_code(KC_F4);
-            unregister_code(KC_LALT);
-            break;
-        default:
-            // Если это одно из F1–F12
-            if (combo_index >= COMBO_FN_BASE && combo_index < COMBO_FN_BASE + 12) {
-                tap_code(KC_F1 + (combo_index - COMBO_FN_BASE));
-            }
-            break;
-    }
-}
-
 // --- Layers ---
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_WIN] = LAYOUT_tkl_ansi(
@@ -248,7 +192,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     [_ALT] = LAYOUT_tkl_ansi(
-        _______,           _______,  _______,  _______, _______,  _______,  _______, _______, _______, _______, _______, _______, _______, _______,
+        _______,           CTRL_1,   CTRL_2,   CTRL_3,  CTRL_4,   CTRL_5,   CTRL_6,  CTRL_7,  CTRL_8,  CTRL_9,  CTRL_0,  _______, _______, _______,
         TD(TD_ALT_TAB),    ALT_F4,   CTRL_W,   _______, CTRL_R,   CTRL_T,   _______, _______, _______, _______, _______, _______, _______, _______,
         _______,           CTRL_A,   CTRL_S,   _______, _______,  _______,  _______, _______, _______, _______, _______, _______,          _______,
         KC_CAPS,           CTRL_Z,   CTRL_X,   CTRL_C,  CTRL_V,   PST_VAL,  _______, _______, _______, _______, _______,                   _______,
