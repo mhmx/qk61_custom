@@ -8,7 +8,8 @@ enum Layers {
     _WIN,                       // [0] Base Windows layer
     _NUM,                       // [1] Numpad layer
     _NAV,                       // [2] Navigation layer
-    _FUNC                       // [3] Layer with F-keys, RGB control and media
+    _FUNC,                       // [3] Layer with F-keys, RGB control and media
+    _ALT
 // The _FUNC layer must be at position [3] for correct connection mode LED indication (BLE, wired, 2.4G)
 };
 
@@ -18,8 +19,9 @@ enum {
     TD_NUM_TAB,                 // Tab modifier: single tap — Tab, double tap — persistent _NUM, hold — temporary _NUM
     TD_NUM_OFF,                 // Turn off persistent _NUM layer
     TD_WIN_LOCK,                // Windows lock or App/Menu key
-    TD_CASE                     // for puntoSwitcher - Ctrl+Cmd+Alt to change case of selected text (abc -> ABC)
-
+    TD_CASE,                     // for puntoSwitcher - Ctrl+Cmd+Alt to change case of selected text (abc -> ABC)
+    TD_ALT_TAB,
+    TD_ALT_LAYER
 };
 
 // Shortcut definitions
@@ -31,7 +33,44 @@ enum {
 #define CTRL_V    LCTL(KC_V)    // Ctrl+V
 #define PST_VAL   LALT(KC_1)    // Alt+1 (paste values Excel shortcut)
 
+#define CTRL_W    LCTL(KC_W)
+#define ALT_F4    A(KC_F4)
+#define CTRL_S    LCTL(KC_S)
+#define CTRL_T    LCTL(KC_T)
+#define CTRL_A    LCTL(KC_A)
+#define CTRL_R    LCTL(KC_R)
+#define ALT_TAB   A(KC_TAB)
+
+
 // --- Tap Dance functions ---
+
+// --- Tap Dance for left Alt ---
+void td_alt_layer_finished(tap_dance_state_t *state, void *user_data) {
+    if (state->pressed) {
+        layer_on(_ALT); // Hold → toggle _ALT layer
+    } else if (state->count == 1) {
+        tap_code(KC_LALT); // Tap → left Alt
+    }
+}
+
+void td_alt_layer_reset(tap_dance_state_t *state, void *user_data) {
+        unregister_code(KC_LALT);
+        layer_off(_ALT); // release → toggle layer _ALT off
+}
+
+
+// --- Tap Dance for Tab in layer _ALT ---
+void td_alt_tab_finished(tap_dance_state_t *state, void *user_data) {
+    // if (state->pressed) {
+    if (state->count == 1) {
+        register_code(KC_LALT); // Hold Alt for Alt+Tab
+        tap_code(KC_TAB); // Send Tab
+    }
+}
+
+void td_alt_tab_reset(tap_dance_state_t *state, void *user_data) {
+    // do nothing
+}
 
 // CapsLock modifier
 void td_win_caps_finished(tap_dance_state_t *state, void *user_data) {
@@ -92,6 +131,7 @@ void td_case_finished(tap_dance_state_t *state, void *user_data) {
     }
 }
 
+
 // Tap Dance table
 tap_dance_action_t tap_dance_actions[] = {
     [TD_WIN_CAPS] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_win_caps_finished, td_win_caps_reset),
@@ -99,6 +139,8 @@ tap_dance_action_t tap_dance_actions[] = {
     [TD_NUM_OFF]  = ACTION_TAP_DANCE_FN(td_num_layer_off),
     [TD_WIN_LOCK] = ACTION_TAP_DANCE_FN(td_winlock_finished),
     [TD_CASE] = ACTION_TAP_DANCE_FN(td_case_finished),
+    [TD_ALT_LAYER] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_alt_layer_finished, td_alt_layer_reset),
+    [TD_ALT_TAB]  = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_alt_tab_finished, td_alt_tab_reset),
 };
 
 // --- Combos ---
@@ -178,7 +220,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         TD(TD_NUM_TAB),    KC_Q,     KC_W,     KC_E,    KC_R,     KC_T,     KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,
         TD(TD_WIN_CAPS),   KC_A,     KC_S,     KC_D,    KC_F,     KC_G,     KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,
         KC_LSFT,           KC_Z,     KC_X,     KC_C,    KC_V,     KC_B,     KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,                   KC_RSFT,
-        KC_LCTL,           KC_LGUI,  KC_LALT,                     KC_SPC,                              KC_RALT, TD(TD_WIN_LOCK),  KC_RCTL, MO(_FUNC)
+        KC_LCTL,           KC_LGUI,  TD(TD_ALT_LAYER),            KC_SPC,                              KC_LALT, TD(TD_WIN_LOCK),  KC_RCTL, MO(_FUNC)
     ),
 
     [_NUM] = LAYOUT_tkl_ansi(
@@ -186,7 +228,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         TD(TD_NUM_OFF),    _______,  _______,  KC_F2,   KC_F4,    _______,  _______, KC_P7,   KC_P8,   KC_P9,   KC_PMNS, _______, _______, _______,
         _______,           _______,  _______,  _______, KC_ENT,   _______,  S(KC_9), KC_P4,   KC_P5,   KC_P6,   KC_PPLS, _______,          KC_PENT,
         _______,           _______,  _______,  _______, _______,  KC_EQL,   S(KC_0), KC_P1,   KC_P2,   KC_P3,   KC_PDOT,                   _______,
-        _______,           _______,  _______,                     KC_P0,                              _______,  _______,          _______, _______
+        _______,           _______,  KC_LALT,                     KC_P0,                              _______,  _______,          _______, _______
     ),
 
     [_NAV] = LAYOUT_tkl_ansi(
@@ -194,7 +236,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,           _______,  KC_LGUI,  KC_F2,   KC_F4,    _______,  _______, KC_HOME, KC_UP,   KC_PGUP, KC_PSCR, KC_SCRL, KC_NUM,  KC_PAUS,
         _______,           _______,  KC_LCTL,  KC_LSFT, KC_LALT,  KC_ENT,   KC_ENT,  KC_LEFT, KC_DOWN, KC_RGHT, KC_BSPC, KC_DEL,           KC_ENT,
         KC_CAPS,           CTRL_Z,   CTRL_X,   CTRL_C,  CTRL_V,   PST_VAL,  _______, KC_END,  KC_DOT,  KC_PGDN, _______,                   TD(TD_CASE),
-        _______,           _______,  _______,                     _______,                             _______, _______,          _______, _______
+        _______,           _______,  KC_LALT,                     _______,                             _______, _______,          _______, _______
     ),
 
     [_FUNC] = LAYOUT_tkl_ansi(
@@ -203,5 +245,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         LOGO_MOD,          LOGO_HUD, LOGO_HUI, _______, _______,  _______,  _______, _______, _______, _______, RGB_HUD, RGB_HUI,          QK_BAT,
         LOGO_VAI,          RGB_VAD,  RGB_VAI,  KC_CALC, _______,  _______,  _______, RGB_RMOD,                  RGB_MOD, KC_MPRV, KC_MNXT, KC_MPLY, 
         LOGO_VAD,          LOGO_SPD, LOGO_SPI,                    RGB_TOG,                             KC_VOLD, KC_VOLU, KC_MUTE,          _______
+    ),
+
+    [_ALT] = LAYOUT_tkl_ansi(
+        _______,           _______,  _______,  _______, _______,  _______,  _______, _______, _______, _______, _______, _______, _______, _______,
+        TD(TD_ALT_TAB),            ALT_F4,   CTRL_W,   _______, CTRL_R,  CTRL_T,   _______, _______, _______, _______, _______, _______, _______, _______,
+        _______,           CTRL_A,   CTRL_S,   _______, _______,  _______,  _______, _______, _______, _______, _______, _______,          _______,
+        KC_CAPS,           CTRL_Z,   CTRL_X,   CTRL_C,  CTRL_V,   PST_VAL,  _______, _______, _______, _______, _______,                   _______,
+        _______,           _______,  _______,                     _______,                             _______, _______,          _______, _______
     )
 };
