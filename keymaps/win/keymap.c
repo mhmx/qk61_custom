@@ -9,7 +9,7 @@ enum Layers {
     _NUM,                       // [1] Numpad layer
     _NAV,                       // [2] Navigation layer
     _FUNC,                       // [3] Layer with F-keys, RGB control and media
-    _ALT
+    _ALT                        // [4] Layer with basic ctrl+ commands to alt+ commands (alt+c -> ctrl+c, alt+v -> ctrl+v, etc.)
 // The _FUNC layer must be at position [3] for correct connection mode LED indication (BLE, wired, 2.4G)
 };
 
@@ -21,7 +21,9 @@ enum {
     TD_WIN_LOCK,                // Windows lock or App/Menu key
     TD_CASE,                     // for puntoSwitcher - Ctrl+Cmd+Alt to change case of selected text (abc -> ABC)
     TD_ALT_TAB,
-    TD_ALT_LAYER
+    TD_ALT_LAYER,
+    TD_CALC,
+    TD_CALC_OFF
 };
 
 // Shortcut definitions
@@ -33,6 +35,7 @@ enum {
 
 // --- Editing ---
 #define CTRL_Z    LCTL(KC_Z)    // Undo
+#define CTRL_Y    LCTL(KC_Y)    // Redo
 #define CTRL_X    LCTL(KC_X)    // Cut
 #define CTRL_C    LCTL(KC_C)    // Copy
 #define CTRL_V    LCTL(KC_V)    // Paste
@@ -44,8 +47,9 @@ enum {
 #define CTRL_S    LCTL(KC_S)    // Save
 #define CTRL_A    LCTL(KC_A)    // Select all
 #define CTRL_R    LCTL(KC_R)    // Refresh
+#define CTRL_F    LCTL(KC_F)    // Find
 
-// --- Tab Navigation ---
+// --- Browser Tab Navigation ---
 #define CTRL_1    LCTL(KC_1)
 #define CTRL_2    LCTL(KC_2)
 #define CTRL_3    LCTL(KC_3)
@@ -58,6 +62,22 @@ enum {
 #define CTRL_0    LCTL(KC_0)
 
 // --- Tap Dance functions ---
+
+// --- Acticate Calculator + toggle numpad layer ---
+void td_calc_finished(tap_dance_state_t *state, void *user_data) {
+    if (state->count == 1) {
+        tap_code(KC_CALC);
+        layer_on(_NUM);
+    }
+}
+
+// --- Close Calculator + deactivate numpad layer ---
+void td_calc_off_finished(tap_dance_state_t *state, void *user_data) {
+    if (state->count == 1) {
+        tap_code16(ALT_F4);
+        layer_off(_NUM);
+    }
+}
 
 // --- Tap Dance for left Alt ---
 void td_alt_layer_finished(tap_dance_state_t *state, void *user_data) {
@@ -148,13 +168,15 @@ void td_case_finished(tap_dance_state_t *state, void *user_data) {
 
 // Tap Dance table
 tap_dance_action_t tap_dance_actions[] = {
-    [TD_WIN_CAPS] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_win_caps_finished, td_win_caps_reset),
-    [TD_NUM_TAB]  = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_num_tab_finished,  td_num_tab_reset),
-    [TD_NUM_OFF]  = ACTION_TAP_DANCE_FN(td_num_layer_off),
-    [TD_WIN_LOCK] = ACTION_TAP_DANCE_FN(td_winlock_finished),
-    [TD_CASE] = ACTION_TAP_DANCE_FN(td_case_finished),
+    [TD_WIN_CAPS]  = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_win_caps_finished, td_win_caps_reset),
+    [TD_NUM_TAB]   = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_num_tab_finished,  td_num_tab_reset),
+    [TD_NUM_OFF]   = ACTION_TAP_DANCE_FN(td_num_layer_off),
+    [TD_WIN_LOCK]  = ACTION_TAP_DANCE_FN(td_winlock_finished),
+    [TD_CASE]      = ACTION_TAP_DANCE_FN(td_case_finished),
     [TD_ALT_LAYER] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_alt_layer_finished, td_alt_layer_reset),
-    [TD_ALT_TAB]  = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_alt_tab_finished, td_alt_tab_reset),
+    [TD_ALT_TAB]   = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_alt_tab_finished, td_alt_tab_reset),
+    [TD_CALC]      = ACTION_TAP_DANCE_FN(td_calc_finished),
+    [TD_CALC_OFF]  = ACTION_TAP_DANCE_FN(td_calc_off_finished),
 };
 
 // --- Layers ---
@@ -164,7 +186,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         TD(TD_NUM_TAB),    KC_Q,     KC_W,     KC_E,    KC_R,     KC_T,     KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,
         TD(TD_WIN_CAPS),   KC_A,     KC_S,     KC_D,    KC_F,     KC_G,     KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,
         KC_LSFT,           KC_Z,     KC_X,     KC_C,    KC_V,     KC_B,     KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,                   KC_RSFT,
-        KC_LCTL,           KC_LGUI,  TD(TD_ALT_LAYER),            KC_SPC,                              KC_RALT, TD(TD_WIN_LOCK),  KC_RCTL, MO(_FUNC)
+        KC_LCTL,           KC_LGUI,  KC_LALT,                     KC_SPC,                    LT(_NAV, KC_RALT), TD(TD_WIN_LOCK),  KC_RCTL, MO(_FUNC)
     ),
 
     [_NUM] = LAYOUT_tkl_ansi(
@@ -172,7 +194,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         TD(TD_NUM_OFF),    _______,  _______,  KC_F2,   KC_F4,    _______,  _______, KC_P7,   KC_P8,   KC_P9,   KC_PMNS, _______, _______, _______,
         _______,           _______,  _______,  _______, KC_ENT,   _______,  S(KC_9), KC_P4,   KC_P5,   KC_P6,   KC_PPLS, _______,          KC_PENT,
         _______,           _______,  _______,  _______, _______,  KC_EQL,   S(KC_0), KC_P1,   KC_P2,   KC_P3,   KC_PDOT,                   _______,
-        _______,           _______,  KC_LALT,                     KC_P0,                              _______,  _______,          _______, _______
+        _______,           _______,  KC_LALT,                     KC_P0,                               _______, TO(_WIN), TD(TD_CALC_OFF), _______
     ),
 
     [_NAV] = LAYOUT_tkl_ansi(
@@ -180,7 +202,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,           _______,  KC_LGUI,  KC_F2,   KC_F4,    _______,  _______, KC_HOME, KC_UP,   KC_PGUP, KC_PSCR, KC_SCRL, KC_NUM,  KC_PAUS,
         _______,           _______,  KC_LCTL,  KC_LSFT, KC_LALT,  KC_ENT,   KC_ENT,  KC_LEFT, KC_DOWN, KC_RGHT, KC_BSPC, KC_DEL,           KC_ENT,
         KC_CAPS,           CTRL_Z,   CTRL_X,   CTRL_C,  CTRL_V,   PST_VAL,  _______, KC_END,  KC_DOT,  KC_PGDN, _______,                   TD(TD_CASE),
-        _______,           _______,  KC_LALT,                     _______,                             _______, _______,          _______, _______
+        _______,           _______,  KC_LALT,                     _______,                             _______, TO(_NUM), TD(TD_CALC),     _______
     ),
 
     [_FUNC] = LAYOUT_tkl_ansi(
@@ -193,9 +215,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_ALT] = LAYOUT_tkl_ansi(
         _______,           CTRL_1,   CTRL_2,   CTRL_3,  CTRL_4,   CTRL_5,   CTRL_6,  CTRL_7,  CTRL_8,  CTRL_9,  CTRL_0,  _______, _______, _______,
-        TD(TD_ALT_TAB),    ALT_F4,   CTRL_W,   _______, CTRL_R,   CTRL_T,   _______, _______, _______, _______, _______, _______, _______, _______,
-        _______,           CTRL_A,   CTRL_S,   _______, _______,  _______,  _______, _______, _______, _______, _______, _______,          _______,
-        KC_CAPS,           CTRL_Z,   CTRL_X,   CTRL_C,  CTRL_V,   PST_VAL,  _______, _______, _______, _______, _______,                   _______,
+        TD(TD_ALT_TAB),    ALT_F4,   CTRL_W,   _______, CTRL_R,   CTRL_T,   CTRL_Y,  _______, _______, _______, _______, _______, _______, _______,
+        _______,           CTRL_A,   CTRL_S,   _______, CTRL_F,   _______,  _______, _______, _______, _______, _______, _______,          _______,
+        KC_LSFT,           CTRL_Z,   CTRL_X,   CTRL_C,  CTRL_V,   PST_VAL,  _______, _______, _______, _______, _______,                   _______,
         _______,           _______,  _______,                     _______,                             _______, _______,          _______, _______
     )
 };
