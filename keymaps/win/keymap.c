@@ -214,7 +214,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     [_ALT] = LAYOUT_tkl_ansi(
-        _______,           CTRL_1,   CTRL_2,   CTRL_3,  CTRL_4,   CTRL_5,   CTRL_6,  CTRL_7,  CTRL_8,  CTRL_9,  CTRL_0,  _______, _______, _______,
+        KC_GRV,            CTRL_1,   CTRL_2,   CTRL_3,  CTRL_4,   CTRL_5,   CTRL_6,  CTRL_7,  CTRL_8,  CTRL_9,  CTRL_0,  _______, _______, _______,
         TD(TD_ALT_TAB),    ALT_F4,   CTRL_W,   _______, CTRL_R,   CTRL_T,   CTRL_Y,  _______, _______, _______, _______, _______, _______, _______,
         _______,           CTRL_A,   CTRL_S,   _______, CTRL_F,   _______,  _______, _______, _______, _______, _______, _______,          _______,
         KC_LSFT,           CTRL_Z,   CTRL_X,   CTRL_C,  CTRL_V,   PST_VAL,  _______, _______, _______, _______, _______,                   _______,
