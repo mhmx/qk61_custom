@@ -19,7 +19,7 @@ enum {
     TD_NUM_TAB,                 // Tab modifier: single tap — Tab, double tap — persistent _NUM, hold — temporary _NUM
     TD_NUM_OFF,                 // Turn off persistent _NUM layer
     TD_WIN_LOCK,                // Windows lock or App/Menu key
-    TD_CASE,                     // for puntoSwitcher - Ctrl+Cmd+Alt to change case of selected text (abc -> ABC)
+    TD_CASE,                     // for SimpleSwitcher - Shift+Ctrl+\ to change case of selected text (abc -> ABC)
     TD_ALT_TAB,
     TD_ALT_LAYER,
     TD_CALC,
@@ -110,32 +110,13 @@ void td_alt_tab_reset(tap_dance_state_t *state, void *user_data) {
 void td_win_caps_finished(tap_dance_state_t *state, void *user_data) {
     if (state->count == 1 && !state->pressed) {
         tap_code16(WIN_LANG);   // 1 tap: change language
-    } else if (state->count == 2 && !state->pressed) {
-        tap_code(KC_CAPS);      // 2 taps: CapsLock
-    } else if (state->count == 1 && state->pressed) {
+    } else {
         layer_on(_NAV);         // Hold: activate _NAV on hold
     }
 }
 
 void td_win_caps_reset(tap_dance_state_t *state, void *user_data) {
     layer_off(_NAV);
-}
-
-// Tab modifier
-void td_num_tab_finished(tap_dance_state_t *state, void *user_data) {
-    if (state->count == 1 && !state->pressed) {
-        tap_code(KC_TAB);       // 1 tap: Tab
-    } else if (state->count == 2 && state->pressed) {
-        layer_move(_NUM);       // 2 taps: toggle _NUM
-    } else if (state->count == 1 && state->pressed) {
-        layer_on(_NUM);         // Hold: activate _NUM on hold
-    }
-}
-
-void td_num_tab_reset(tap_dance_state_t *state, void *user_data) {
-    if (state->count == 1) {
-        layer_off(_NUM);
-    }
 }
 
 // Disable Numpad layer
@@ -152,14 +133,14 @@ void td_winlock_finished(tap_dance_state_t *state, void *user_data) {
     state->pressed ? tap_code16(WIN_LOCK) : tap_code(KC_APP);
 }
 
-// puntoSwitcher for win: shortcut Ctrl + Cmd + Alt + \ to change case of selected text (abc -> ABC)
+// SimpleSwitcher for win: shortcut Shift + Ctrl + \ to change case of selected text (abc -> ABC)
 void td_case_finished(tap_dance_state_t *state, void *user_data) {
     if (state->pressed) {
         tap_code(KC_RSFT);
     } else {
         tap_code16(C(S(KC_LEFT)));    // select word to left
-        tap_code16(C(S(A(KC_BSLS)))); // change case
-        wait_ms(500);
+        tap_code16(S(C(KC_BSLS))); // change case
+        wait_ms(300);
         tap_code16(KC_RIGHT);         // unselect word (right)
         tap_code16(KC_SPC);           // add space
     }
@@ -169,8 +150,6 @@ void td_case_finished(tap_dance_state_t *state, void *user_data) {
 // Tap Dance table
 tap_dance_action_t tap_dance_actions[] = {
     [TD_WIN_CAPS]  = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_win_caps_finished, td_win_caps_reset),
-    [TD_NUM_TAB]   = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_num_tab_finished,  td_num_tab_reset),
-    [TD_NUM_OFF]   = ACTION_TAP_DANCE_FN(td_num_layer_off),
     [TD_WIN_LOCK]  = ACTION_TAP_DANCE_FN(td_winlock_finished),
     [TD_CASE]      = ACTION_TAP_DANCE_FN(td_case_finished),
     [TD_ALT_LAYER] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_alt_layer_finished, td_alt_layer_reset),
@@ -181,12 +160,12 @@ tap_dance_action_t tap_dance_actions[] = {
 
 // --- Layers ---
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    [_WIN] = LAYOUT_tkl_ansi(
-        QK_GESC,            KC_1,     KC_2,     KC_3,    KC_4,     KC_5,     KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC,
-        TD(TD_NUM_TAB),    KC_Q,     KC_W,     KC_E,    KC_R,     KC_T,     KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,
+    [_WIN] = LAYOUT_tkl_ansi(   
+        QK_GESC,           KC_1,     KC_2,     KC_3,    KC_4,     KC_5,     KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC,
+        LT(_NUM, KC_TAB),  KC_Q,     KC_W,     KC_E,    KC_R,     KC_T,     KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,
         TD(TD_WIN_CAPS),   KC_A,     KC_S,     KC_D,    KC_F,     KC_G,     KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,
         KC_LSFT,           KC_Z,     KC_X,     KC_C,    KC_V,     KC_B,     KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,                   KC_RSFT,
-        KC_LCTL,           KC_LGUI,  TD(TD_ALT_LAYER),                     KC_SPC,                    LT(_NAV, KC_RALT), TD(TD_WIN_LOCK),  KC_RCTL, MO(_FUNC)
+        KC_LCTL,           KC_LGUI,  TD(TD_ALT_LAYER),                     KC_SPC,           LT(_NAV, KC_RALT), TD(TD_WIN_LOCK),  KC_RCTL, MO(_FUNC)
     ),
 
     [_NUM] = LAYOUT_tkl_ansi(
